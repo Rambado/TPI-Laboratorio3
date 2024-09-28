@@ -1,6 +1,8 @@
-
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
+
+
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="text-center">
@@ -9,14 +11,20 @@ const HomePage = () => {
                 </div>
 
                 <div className="d-flex justify-content-center mb-4">
-                    <button className="btn btn-outline-secondary mx-2">Iniciar sesión</button>
-                    <button className="btn btn-outline-secondary mx-2">Regístrate</button>
+                    
+                    <Link to="/login">
+                        <button className="btn btn-outline-secondary mx-2">Iniciar sesión</button>
+                    </Link>
+                    
+                    <Link to="/register">
+                        <button className="btn btn-outline-secondary mx-2">Regístrate</button>
+                    </Link>
                     <button className="btn btn-outline-secondary mx-2">¿Eres un club?</button>
                 </div>
 
                 <div>
                     <p>
-                        Turno disponibles para el día de la fecha
+                        Turnos disponibles para el día de la fecha
                     </p>
                 </div>
 
