@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Form, Button } from 'react-bootstrap';
+
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -60,14 +60,14 @@ function LoginPage() {
                 </div>
 
                 <div className="text-center mt-3">
-                    <Button variant="secondary" onClick={goToHomePage} className="w-100">
-                        Volver a Home
+                    <Button variant="outline-success" onClick={goToRegisterPage} className="w-100">
+                        Regístrate
                     </Button>
                 </div>
 
                 <div className="text-center mt-3">
-                    <Button variant="outline-success" onClick={goToRegisterPage} className="w-100">
-                        Regístrate
+                    <Button variant="secondary" onClick={goToHomePage} className="w-100">
+                        Volver a Inicio
                     </Button>
                 </div>
 

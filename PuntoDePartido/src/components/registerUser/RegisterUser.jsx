@@ -1,8 +1,5 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { useState } from 'react';
+import { Form, Button, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 function RegisterUser() {
@@ -14,14 +11,23 @@ function RegisterUser() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const navigate = useNavigate();
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // API
-        // fetch
+        const userInfo = {
+            dni,
+            nombre,
+            edad,
+            telefono,
+            posicionJuego,
+            email,
+            password
+        };
+
+        console.log(userInfo);
     };
+
+    const navigate = useNavigate();
 
     const goToHomePage = () => {
         navigate('/');
@@ -84,8 +90,7 @@ function RegisterUser() {
                         <Form.Select
                             value={posicionJuego}
                             onChange={(e) => setPosicionJuego(e.target.value)}
-                            required
-                        >
+                            required>
                             <option value="Drive">Drive</option>
                             <option value="Reves">Revés</option>
                             <option value="AmbosLados">Ambos lados</option>
@@ -122,7 +127,7 @@ function RegisterUser() {
                 </Button>
 
                 <Button variant="secondary" className="w-100" onClick={goToHomePage}>
-                    Volver a Home
+                    Volver a Incio
                 </Button>
             </Form>
         </div>

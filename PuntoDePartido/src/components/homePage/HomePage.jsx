@@ -6,20 +6,31 @@ const HomePage = () => {
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="text-center">
-                <div>
+
+                <div className="mb-4 mt-n5">
+                    <img
+                        src="../../../img/f1.jpeg"
+                        alt="padel"
+                        className="img-fluid mb-3" 
+                        style={{ width: '1100px', maxHeight: '450px' }}
+                    />
                     <h1>Punto de Partido</h1>
                 </div>
 
                 <div className="d-flex justify-content-center mb-4">
-                    
+
                     <Link to="/login">
-                        <button className="btn btn-outline-secondary mx-2">Iniciar sesión</button>
+                        <button className="btn btn-outline-light mx-2">Iniciar sesión</button>
                     </Link>
-                    
+
                     <Link to="/register">
-                        <button className="btn btn-outline-secondary mx-2">Regístrate</button>
+                        <button className="btn btn-outline-secondary mx-2">Registrarse</button>
                     </Link>
-                    <button className="btn btn-outline-secondary mx-2">¿Eres un club?</button>
+
+                    <Link to="/club-register">
+                        <button className="btn btn-outline-success mx-2">¿Eres un club?</button>
+                    </Link>
+
                 </div>
 
                 <div>
