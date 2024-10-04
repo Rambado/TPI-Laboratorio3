@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Form, Button, Col, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Form, Button, Col, Row, Navbar, Nav, Container } from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom";
 
 function RegisterUser() {
   const [dni, setDni] = useState("");
@@ -35,9 +35,26 @@ function RegisterUser() {
 
   return (
     <>
+      <Navbar bg="light" data-bs-theme="light">
+        <Container>
+          <Navbar.Brand as={Link} to='/'>
+            <img
+              alt=""
+              src="../../../img/PdP.png"
+              width="40"
+              height="40"
+              className="d-inline-block align-center" />Punto de Partido</Navbar.Brand>
+          <Nav>
+            <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
+            <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
+            <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
+
       <div className="d-flex justify-content-center align-items-center vh-100">
         <Form onSubmit={handleSubmit}>
-        <h2 className="text-center mb-4">Registro de Usuario</h2>
+          <h2 className="text-center mb-4">Registro de Usuario</h2>
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formGridDNI">
               <Form.Label>DNI</Form.Label>
