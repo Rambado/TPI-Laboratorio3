@@ -5,6 +5,7 @@ import RegisterUser from './components/registerUser/RegisterUser'
 import ClubRegister from './components/clubRegister/ClubRegister';
 import ReserverPage from './components/reserver/ReserverPage';
 import ProfilePage from './components/profilePage/ProfilePage';
+import OwnerPage from './components/ownerPage/OwnerPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/club-register" element={<ClubRegister />} />
         <Route path="/reserva" element={<ReserverPage />} />
         <Route path="/perfil" element={<ProfilePage />} />
+        <Route path="/owner" element={<OwnerPage />} />
       </Routes>
     </Router>
   );

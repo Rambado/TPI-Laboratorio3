@@ -18,7 +18,6 @@ function LoginPage() {
         } else {
             alert('Usuario o contraseña incorrectos');
         }
-
     };
 
     const goToHomePage = () => {
@@ -44,10 +43,11 @@ function LoginPage() {
                         <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
                         <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
                         <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
+                        <Nav.Link as={Link} to='/owner'>Perfil Club</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>
-            
+
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <Form onSubmit={handleSubmit} style={{ width: '400px' }}>
                     <h2 className="text-center mb-4">Iniciar Sesión</h2>
