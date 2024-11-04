@@ -1,22 +1,36 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Button, Navbar, Nav, Container } from 'react-bootstrap';
-
+import axios from 'axios';
 
 function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
+    const [dni, setDni] = useState('');
+    const [contrasena, setContrasena] = useState('');
     const navigate = useNavigate();
 
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (email === 'usuario@mail.com' && password === '123456') {
-            navigate('/reserva');
-        } else {
-            alert('Usuario o contraseña incorrectos');
+        try {
+            const response = await axios.post('https://localhost:7019/api/Auth/login', {
+                dni: dni,
+                contrasena: contrasena,
+            });
+            const { token, rol } = response.data;
+            localStorage.setItem('token', token);
+            navigate(rol === 'Jugador' ? '/reserva' : '/owner');
+        } catch (error) {
+            if (error.response) {
+                
+                console.error("Error en la respuesta:", error.response.data);
+            } else if (error.request) {
+                
+                console.error("Error en la solicitud:", error.request);
+            } else {
+                
+                console.error("Error:", error.message);
+            }
+            alert('DNI o contraseña incorrectos');
         }
     };
 
@@ -38,7 +52,8 @@ function LoginPage() {
                             src="../../../img/PdP.png"
                             width="40"
                             height="40"
-                            className="d-inline-block align-center" />Punto de Partido</Navbar.Brand>
+                            className="d-inline-block align-center" /> Punto de Partido
+                    </Navbar.Brand>
                     <Nav>
                         <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
                         <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
@@ -53,12 +68,12 @@ function LoginPage() {
                     <h2 className="text-center mb-4">Iniciar Sesión</h2>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Correo Electrónico</Form.Label>
+                        <Form.Label>DNI</Form.Label>
                         <Form.Control
-                            type="email"
-                            placeholder="Ingresa tu correo"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="number"
+                            placeholder="Ingrese su DNI"
+                            value={dni}
+                            onChange={(e) => setDni(e.target.value)}
                             required
                         />
                     </Form.Group>
@@ -67,9 +82,9 @@ function LoginPage() {
                         <Form.Label>Contraseña</Form.Label>
                         <Form.Control
                             type="password"
-                            placeholder="Ingresa tu contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Ingrese su contraseña"
+                            value={contrasena}
+                            onChange={(e) => setContrasena(e.target.value)}
                             required
                         />
                     </Form.Group>
@@ -91,7 +106,6 @@ function LoginPage() {
                             Volver a Inicio
                         </Button>
                     </div>
-
                 </Form>
             </div>
         </>
