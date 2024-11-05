@@ -11,35 +11,39 @@ function ProfilePage() {
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
     const [posicion, setPosicion] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    navigate('/login'); 
+                    navigate('/login');
                     return;
                 }
-
+    
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-
-                const profileResponse = await axios.get('http://localhost:5000/api/user/profile', config);
-                setUserData(profileResponse.data);
-                setNombre(profileResponse.data.nombre);
-                setEmail(profileResponse.data.email);
-                setTelefono(profileResponse.data.telefono);
-                setPosicion(profileResponse.data.posicion);
-
-                const reservasResponse = await axios.get('http://localhost:5000/api/user/reservas', config);
-                setReservasAnteriores(reservasResponse.data);
-
-            } catch {
-                console.error('Error al cargar datos:');
+    
+                const profileResponse = await axios.get('http://localhost:7020/api/user/profile', config);
+                const profileData = profileResponse.data || {};
+                setUserData(profileData);
+                setNombre(profileData.nombre || '');
+                setEmail(profileData.email || '');
+                setTelefono(profileData.telefono || '');
+                setPosicion(profileData.posicion || '');
+    
+                const reservasResponse = await axios.get('http://localhost:7020/api/user/reservas', config);
+                setReservasAnteriores(reservasResponse.data || []);
+            } catch (error) {
+                console.error('Error al cargar datos:', error);
+                alert('Error al cargar datos');
             }
         };
-
+    
         fetchData();
     }, [navigate]);
+    
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
@@ -48,39 +52,37 @@ function ProfilePage() {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-
-            await axios.put('localhost', { nombre, email, telefono, posicion }, config);
+            await axios.put('http://localhost:7020/api/user/profile', { nombre, email, telefono, posicion }, config);
             alert('Perfil actualizado exitosamente');
-        } catch {
-            console.error('Error al actualizar perfil:');
+        } catch (error) {
+            console.error('Error al actualizar perfil:', error);
+            alert('Error al actualizar perfil');
         }
     };
 
     const handlePasswordChange = async (e) => {
         e.preventDefault();
 
+        if (newPassword !== confirmPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const nuevaContraseña = e.target.formPasswordNueva.value;
-            const confirmarContraseña = e.target.formPasswordConfirmar.value;
-
-            if (nuevaContraseña !== confirmarContraseña) {
-                alert('Las contraseñas no coinciden');
-                return;
-            }
-
-            await axios.post('localhost', { nuevaContraseña }, config);
+            await axios.post('http://localhost:7020/api/user/change-password', { newPassword }, config);
             alert('Contraseña cambiada exitosamente');
-        } catch {
-            console.error('Error al cambiar contraseña:');
+        } catch (error) {
+            console.error('Error al cambiar contraseña:', error);
+            alert('Error al cambiar contraseña');
         }
     };
 
     return (
         <>
-            <Navbar bg="light" data-bs-theme="light">
+            <Navbar bg="light">
                 <Container>
                     <Navbar.Brand as={Link} to='/'>
                         <img
@@ -126,9 +128,9 @@ function ProfilePage() {
                                 <ListGroup variant="flush">
                                     {reservasAnteriores.map((reserva) => (
                                         <ListGroup.Item key={reserva.id}>
-                                            <strong>Fecha:</strong> {reserva.fecha} <br/>
-                                            <strong>Club:</strong> {reserva.club} <br/>
-                                            <strong>Turno:</strong> {reserva.turno} <br/>
+                                            <strong>Fecha:</strong> {reserva.fecha} <br />
+                                            <strong>Club:</strong> {reserva.club} <br />
+                                            <strong>Turno:</strong> {reserva.turno} <br />
                                             <strong>Cancha:</strong> {reserva.cancha}
                                         </ListGroup.Item>
                                     ))}
@@ -194,12 +196,24 @@ function ProfilePage() {
                                 <Form onSubmit={handlePasswordChange}>
                                     <Form.Group className="mb-3" controlId="formPasswordNueva">
                                         <Form.Label>Nueva Contraseña</Form.Label>
-                                        <Form.Control type="password" placeholder="Ingrese nueva contraseña" />
+                                        <Form.Control
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Ingrese nueva contraseña"
+                                            required
+                                        />
                                     </Form.Group>
 
                                     <Form.Group className="mb-3" controlId="formPasswordConfirmar">
                                         <Form.Label>Confirmar Nueva Contraseña</Form.Label>
-                                        <Form.Control type="password" placeholder="Confirme nueva contraseña" />
+                                        <Form.Control
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="Confirme nueva contraseña"
+                                            required
+                                        />
                                     </Form.Group>
 
                                     <Button variant="primary" type="submit">
