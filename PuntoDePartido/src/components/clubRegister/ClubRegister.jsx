@@ -13,11 +13,11 @@ function ClubRegister() {
     const [cvu, setCvu] = useState('');
     const [numberOfCourts, setNumberOfCourts] = useState('');
     const [description, setDescription] = useState('');
-    const [images, setImages] = useState(null);
+    //const [images, setImages] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const clubInfo = {
             username,
             clubName,
@@ -26,15 +26,32 @@ function ClubRegister() {
             cvu,
             numberOfCourts,
             description,
-            images
         };
-
-        console.log(clubInfo);
+    
+        try {
+            const response = await fetch('https://localhost:7019/api/Club', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(clubInfo),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Error al registrar el club');
+            }
+    
+            const data = await response.json();
+            console.log('Club registrado:', data);
+            goToHomePage();
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
-    const handleImageChange = (e) => {
-        setImages(e.target.files);
-    };
+    // const handleImageChange = (e) => {
+    //     setImages(e.target.files);
+    // };
 
     const goToHomePage = () => {
         navigate('/');
@@ -147,7 +164,7 @@ function ClubRegister() {
                         <Form.Control
                             type="file"
                             name="images"
-                            onChange={handleImageChange}
+                            //onChange={handleImageChange}
                             multiple
                             accept="image/*"
                         />

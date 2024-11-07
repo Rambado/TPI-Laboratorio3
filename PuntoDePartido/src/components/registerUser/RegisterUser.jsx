@@ -1,31 +1,44 @@
 import { useState } from "react";
 import { Form, Button, Col, Row, Navbar, Nav, Container } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import axios from 'axios';
 
 function RegisterUser() {
   const [dni, setDni] = useState("");
   const [nombre, setNombre] = useState("");
   const [edad, setEdad] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [posicionJuego, setPosicionJuego] = useState("Drive");
+  const [tel, setTel] = useState("");
+  const [posicionEnCancha, setPosicionEnCancha] = useState("Drive");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [contrasena, setContrasena] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userInfo = {
-      dni,
-      nombre,
-      edad,
-      telefono,
-      posicionJuego,
-      email,
-      password,
-    };
 
-    console.log(userInfo);
+    const userInfo = {
+      dni: "45678910",
+      nombre: "Matias Rambado",
+      edad: 35,
+      tel: "45678912",
+      email: "matias@gmail.com",
+      contrasena: "456789",
+      rol: "Jugador",
+      posicionEnCancha: 3
   };
+
+
+    try {
+      const response = await axios.post('https://localhost:7019/api/Usuario', userInfo);
+      console.log('Usuario registrado:', response.data);
+      alert('Usuario registrado exitosamente');
+      navigate('/perfil');
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      alert('Error al registrar usuario');
+    }
+  };
+
 
   const navigate = useNavigate();
 
@@ -96,8 +109,8 @@ function RegisterUser() {
               <Form.Control
                 type="text"
                 placeholder="Ingresa tu teléfono"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
+                value={tel}
+                onChange={(e) => setTel(e.target.value)}
                 required
               />
             </Form.Group>
@@ -107,8 +120,8 @@ function RegisterUser() {
             <Form.Group as={Col} controlId="formGridPosicionJuego">
               <Form.Label>Posición de Juego</Form.Label>
               <Form.Select
-                value={posicionJuego}
-                onChange={(e) => setPosicionJuego(e.target.value)}
+                value={posicionEnCancha}
+                onChange={(e) => setPosicionEnCancha(e.target.value)}
                 required
               >
                 <option value="Drive">Drive</option>
@@ -135,8 +148,8 @@ function RegisterUser() {
               <Form.Control
                 type="password"
                 placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
                 required
               />
             </Form.Group>
@@ -153,6 +166,6 @@ function RegisterUser() {
       </div>
     </>
   );
-}
 
+}
 export default RegisterUser;

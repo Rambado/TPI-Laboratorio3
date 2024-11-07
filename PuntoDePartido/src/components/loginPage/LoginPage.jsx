@@ -16,18 +16,22 @@ function LoginPage() {
                 dni: dni,
                 contrasena: contrasena,
             });
-            const { token, rol } = response.data;
+
+            const { token, rol, usuarioId, nombre, expiration } = response.data;
+
             localStorage.setItem('token', token);
+            localStorage.setItem('userId', usuarioId);
+            localStorage.setItem('nombre', nombre);
+            localStorage.setItem('rol', rol);
+            localStorage.setItem('tokenExpiration', expiration);
+
             navigate(rol === 'Jugador' ? '/reserva' : '/owner');
         } catch (error) {
             if (error.response) {
-                
                 console.error("Error en la respuesta:", error.response.data);
             } else if (error.request) {
-                
                 console.error("Error en la solicitud:", error.request);
             } else {
-                
                 console.error("Error:", error.message);
             }
             alert('DNI o contraseña incorrectos');
