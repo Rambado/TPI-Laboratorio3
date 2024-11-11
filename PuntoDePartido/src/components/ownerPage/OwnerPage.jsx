@@ -1,94 +1,150 @@
-import {useState} from 'react'
-import { Form, Button } from 'react-bootstrap';
+import { Container, Navbar, Nav, Card, Button, Form } from 'react-bootstrap';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function OwnerPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [clubData, setClubData] = useState({
+        clubName: "",
+        description: "",
+        numberOfCourts: 0,
+        canchas: [] // Asegúrate de inicializar canchas como un array
+    });
+    const [loading, setLoading] = useState(true);
 
-    const [selectedClub, setSelectedClub] = useState('');
-    const [selectedDay, setSelectedDay] = useState('');
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
-    const [availableSlots, setAvailableSlots] = useState([]);
+    useEffect(() => {
+        const fetchClubData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
 
-    const clubes = ['Utopia', 'Rosario Padel'];
-    const cupos = {
-        'Utopia': {Lunes:{Mañana:4, Tarde:4, Noche:4}},
-        'Rosario Padel': {Lunes:{Mañana:4, Tarde:4, Noche:4}}
-};
+                const config = { headers: { Authorization: `Bearer ${token}` } };
 
+                const clubResponse = await axios.get(`https://localhost:7019/api/Club/${id}`, config);
+                console.log('Respuesta de la API:', clubResponse.data);
 
-  return (
+                const clubData = clubResponse.data || {};
+                setClubData({
+                    clubName: clubData.nombre || '',
+                    description: clubData.descripcion || '',
+                    numberOfCourts: clubData.numeroDeCanchas || 0,
+                    canchas: clubData.canchas || []
+                });
+            } catch (error) {
+                console.error("Error al obtener los datos del club:", error);
+                alert('Error al cargar los datos del club');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    <div className="d-flex justify-content-center align-items-center vh-100">
-            <Form style={{ width: '400px' }}>
-                <h2 className="text-center mb-4">Reservar una Cancha</h2>
+        fetchClubData();
+    }, [id, navigate]);
 
-        
-                <Form.Group className="mb-3">
-                    <Form.Label>Selecciona el club</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={selectedClub}
-                        onChange={(e) => setSelectedClub(e.target.value)}
-                        required
-                    >
-                        <option value="">Elige un club</option>
-                        {clubes.map((club) => (
-                            <option key={club} value={club}>
-                                {club}
-                            </option>
-                        ))}
-                    </Form.Control>
-                </Form.Group>
+    const handleUpdateClub = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
 
-                
-                <Form.Group className="mb-3">
-                    <Form.Label>Selecciona el día</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={selectedDay}
-                        onChange={(e) => setSelectedDay(e.target.value)}
-                        required
-                    >
-                        <option value="">Elige un día</option>
-                        <option value="Lunes">Lunes</option>
-                        <option value="Martes">Martes</option>
-                        <option value="Miércoles">Miércoles</option>
-                        <option value="Jueves">Jueves</option>
-                        <option value="Viernes">Viernes</option>
-                        <option value="Sábado">Sábado</option>
-                    </Form.Control>
-                </Form.Group>
+            await axios.put(`https://localhost:7019/api/Club/${id}`, {
+                nombre: clubData.clubName,
+                descripcion: clubData.description,
+                numeroDeCanchas: clubData.numberOfCourts
+            }, config);
+            alert('Datos del club actualizados exitosamente');
+        } catch (error) {
+            console.error('Error al actualizar los datos del club:', error);
+            alert('Error al actualizar los datos del club');
+        }
+    };
 
-                
-                <Form.Group className="mb-3">
-                    <Form.Label>Selecciona el turno</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={selectedTimeSlot}
-                        onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                        required
-                    >
-                        <option value="">Elige un turno</option>
-                        <option value="mañana">Mañana</option>
-                        <option value="tarde">Tarde</option>
-                        <option value="noche">Noche</option>
-                    </Form.Control>
-                </Form.Group>
+    if (loading) {
+        return <div>Cargando...</div>;
+    }
 
-                
-                <Button variant="primary" type="submit" className="w-100 mb-3">
-                    Ver cupos disponibles
-                </Button>
+    return (
+        <>
+            <Navbar bg="light" data-bs-theme="light">
+                <Container>
+                    <Navbar.Brand as={Link} to='/'>
+                        <img
+                            alt=""
+                            src="../../../img/PdP.png"
+                            width="40"
+                            height="40"
+                            className="d-inline-block align-center"
+                        />
+                        Punto de Partido
+                    </Navbar.Brand>
+                    <Nav>
+                        <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
+                        <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
+                    </Nav>
+                </Container>
+            </Navbar>
 
-                
-                {availableSlots !== null && (
-                    <div className="text-center">
-                        <h5>Cupos disponibles: {setAvailableSlots}</h5>
-                    </div>
-                )}
-            </Form>
-        </div>
-  )
+            <Container className="mt-5" style={{ width: '800px' }}>
+                <Card>
+                    <Card.Header as="h5">Perfil del Club</Card.Header>
+                    <Card.Body>
+                        <Card.Title>{clubData.clubName}</Card.Title>
+                        <Card.Text>
+                            <strong>Descripción:</strong> {clubData.description} <br />
+                            <strong>Número de canchas:</strong> {clubData.numberOfCourts}
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+
+                <Card className="mt-4">
+                    <Card.Header as="h5">Editar Información del Club</Card.Header>
+                    <Card.Body>
+                        <Form onSubmit={handleUpdateClub}>
+                            <Form.Group className="mb-3" controlId="formClubName">
+                                <Form.Label>Nombre del Club</Form.Label>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="Ingrese el nombre del club" 
+                                    value={clubData.clubName} 
+                                    onChange={(e) => setClubData({ ...clubData, clubName: e.target.value })} 
+                                />
+                            </Form.Group>
+
+                            <Form.Group className="mb- 3" controlId="formDescription">
+                                <Form.Label>Descripción</Form.Label>
+                                <Form.Control 
+                                    as="textarea" 
+                                    rows={3} 
+                                    placeholder="Ingrese una descripción del club" 
+                                    value={clubData.description} 
+                                    onChange={(e) => setClubData({ ...clubData, description: e.target.value })} 
+                                />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formNumberOfCourts">
+                                <Form.Label>Número de Canchas</Form.Label>
+                                <Form.Control 
+                                    type="number" 
+                                    placeholder="Ingrese el número de canchas" 
+                                    value={clubData.numberOfCourts} 
+                                    onChange={(e) => setClubData({ ...clubData, numberOfCourts: e.target.value })} 
+                                />
+                            </Form.Group>
+
+                            <Button variant="primary" type="submit">
+                                Actualizar
+                            </Button>
+                        </Form>
+                    </Card.Body>
+                </Card>
+            </Container>
+        </>
+    );
 }
 
-export default OwnerPage
-
+export default OwnerPage;
