@@ -8,7 +8,7 @@ function RegisterUser() {
   const [nombre, setNombre] = useState("");
   const [edad, setEdad] = useState("");
   const [tel, setTel] = useState("");
-  const [posicionEnCancha, setPosicionEnCancha] = useState("Drive");
+  const [posicionEnCancha, setPosicionEnCancha] = useState(1);
   const [email, setEmail] = useState("");
   const [contrasena, setContrasena] = useState("");
 
@@ -17,14 +17,14 @@ function RegisterUser() {
 
 
     const userInfo = {
-      dni: "45678910",
-      nombre: "Matias Rambado",
-      edad: 35,
-      tel: "45678912",
-      email: "matias@gmail.com",
-      contrasena: "456789",
+      dni: dni,
+      nombre: nombre,
+      edad: Number(edad),
+      tel: tel,
+      email: email,
+      contrasena: contrasena,
       rol: "Jugador",
-      posicionEnCancha: 3
+      posicionEnCancha: parseInt(posicionEnCancha)
   };
 
 
@@ -124,9 +124,9 @@ function RegisterUser() {
                 onChange={(e) => setPosicionEnCancha(e.target.value)}
                 required
               >
-                <option value="Drive">Drive</option>
-                <option value="Reves">Revés</option>
-                <option value="AmbosLados">Ambos lados</option>
+                <option value={1}>Drive</option>
+                <option value={2}>Revés</option>
+                <option value={3}>Ambos lados</option>
               </Form.Select>
             </Form.Group>
           </Row>

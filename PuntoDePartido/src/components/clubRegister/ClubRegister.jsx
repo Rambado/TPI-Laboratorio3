@@ -7,27 +7,26 @@ function ClubRegister() {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
+    const [dni, setDni] = useState("");
     const [clubName, setClubName] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [cvu, setCvu] = useState('');
     const [numberOfCourts, setNumberOfCourts] = useState('');
     const [description, setDescription] = useState('');
-    //const [images, setImages] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const clubInfo = {
-            username,
-            clubName,
-            password,
-            email,
-            cvu,
-            numberOfCourts,
-            description,
+            Nombre: clubName,
+            dni: dni,
+            Descripcion: description,
+            CVU: cvu,
+            Email: email,
+            NumeroDeCanchas: Number(numberOfCourts),
         };
-    
+
         try {
             const response = await fetch('https://localhost:7019/api/Club', {
                 method: 'POST',
@@ -36,11 +35,12 @@ function ClubRegister() {
                 },
                 body: JSON.stringify(clubInfo),
             });
-    
+
             if (!response.ok) {
-                throw new Error('Error al registrar el club');
+                const errorData = await response.json();
+                throw new Error(`Error al registrar el club: ${errorData}`);
             }
-    
+
             const data = await response.json();
             console.log('Club registrado:', data);
             goToHomePage();
@@ -48,10 +48,6 @@ function ClubRegister() {
             console.error('Error:', error);
         }
     };
-
-    // const handleImageChange = (e) => {
-    //     setImages(e.target.files);
-    // };
 
     const goToHomePage = () => {
         navigate('/');
@@ -87,6 +83,17 @@ function ClubRegister() {
                             placeholder="Ingresa tu nombre de usuario"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="formGridDNI">
+                        <Form.Label>DNI</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Ingresa tu DNI"
+                            value={dni}
+                            onChange={(e) => setDni(e.target.value)}
                             required
                         />
                     </Form.Group>
@@ -156,17 +163,6 @@ function ClubRegister() {
                             placeholder="Describe tu club"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formImages">
-                        <Form.Label>Subir Imágenes</Form.Label>
-                        <Form.Control
-                            type="file"
-                            name="images"
-                            //onChange={handleImageChange}
-                            multiple
-                            accept="image/*"
                         />
                     </Form.Group>
 

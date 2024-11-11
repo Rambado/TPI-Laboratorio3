@@ -64,6 +64,19 @@ function ProfilePage() {
         }
     };
 
+    const obtenerPosicionJuego = (posicion) => {
+        switch (posicion) {
+            case 1:
+                return 'Drive';
+            case 2:
+                return 'Revés';
+            case 3:
+                return 'Ambos lados';
+            default:
+                return '';
+        }
+    };
+
     // const handlePasswordChange = async (e) => {
     //     e.preventDefault();
     //     if (newPassword !== confirmPassword) {
@@ -115,7 +128,7 @@ function ProfilePage() {
                                         <Card.Text>
                                             <strong>Email:</strong> {userData.email || ''} <br />
                                             <strong>Teléfono:</strong> {userData.tel || ''} <br />
-                                            <strong>Posición en cancha:</strong> {userData.posicionEnCancha || ''}
+                                            <strong>Posición en cancha:</strong> {obtenerPosicionJuego(userData.posicionEnCancha)}
                                         </Card.Text>
                                     </>
                                 ) : (
