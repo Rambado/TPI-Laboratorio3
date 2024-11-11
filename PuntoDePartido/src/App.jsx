@@ -17,7 +17,7 @@ function App() {
         <Route path="/club-register" element={<ClubRegister />} />
         <Route path="/reserva" element={<ReserverPage />} />
         <Route path="/perfil" element={<ProfilePage />} />
-        <Route path="/owner" element={<OwnerPage />} />
+        <Route path="/owner/:id" element={<OwnerPage />} />
       </Routes>
     </Router>
   );

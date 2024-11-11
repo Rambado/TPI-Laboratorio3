@@ -17,16 +17,20 @@ function ClubRegister() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
+        if (numberOfCourts <= 0) {
+            alert("La cantidad de canchas debe ser mayor a 0.");
+            return;
+        }
+    
         const clubInfo = {
             Nombre: clubName,
-            dni: dni,
             Descripcion: description,
             CVU: cvu,
             Email: email,
             NumeroDeCanchas: Number(numberOfCourts),
         };
-
+    
         try {
             const response = await fetch('https://localhost:7019/api/Club', {
                 method: 'POST',
@@ -35,15 +39,15 @@ function ClubRegister() {
                 },
                 body: JSON.stringify(clubInfo),
             });
-
+    
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.text();
                 throw new Error(`Error al registrar el club: ${errorData}`);
             }
-
+    
             const data = await response.json();
-            console.log('Club registrado:', data);
-            goToHomePage();
+            alert("Club registrado exitosamente.")
+            navigate(`/owner/${data.id}`);
         } catch (error) {
             console.error('Error:', error);
         }
