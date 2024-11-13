@@ -6,6 +6,7 @@ import ClubRegister from './components/clubRegister/ClubRegister';
 import ReserverPage from './components/reserver/ReserverPage';
 import ProfilePage from './components/profilePage/ProfilePage';
 import OwnerPage from './components/ownerPage/OwnerPage';
+import SysAdmin from './components/sysAdmin/SysAdmin';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/reserva" element={<ReserverPage />} />
         <Route path="/perfil" element={<ProfilePage />} />
         <Route path="/owner/:id" element={<OwnerPage />} />
+        <Route path="/sysAdmin" element={<SysAdmin />} />
       </Routes>
     </Router>
   );

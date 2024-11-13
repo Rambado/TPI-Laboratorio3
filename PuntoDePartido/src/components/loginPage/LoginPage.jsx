@@ -63,6 +63,7 @@ function LoginPage() {
                         <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
                         <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
                         <Nav.Link as={Link} to='/owner'>Perfil Club</Nav.Link>
+                        <Nav.Link as={Link} to='/sysAdmin'>Administrador</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>

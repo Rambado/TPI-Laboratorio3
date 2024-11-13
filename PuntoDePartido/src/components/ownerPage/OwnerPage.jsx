@@ -7,10 +7,12 @@ function OwnerPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [clubData, setClubData] = useState({
-        clubName: "",
-        description: "",
+        id: '',
+        clubName: '',
+        description: '',
+        cvu: '',
+        email: '',
         numberOfCourts: 0,
-        canchas: [] // Asegúrate de inicializar canchas como un array
     });
     const [loading, setLoading] = useState(true);
 
@@ -22,16 +24,19 @@ function OwnerPage() {
                     navigate('/login');
                     return;
                 }
-
+    
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-
+    
                 const clubResponse = await axios.get(`https://localhost:7019/api/Club/${id}`, config);
                 console.log('Respuesta de la API:', clubResponse.data);
-
+    
                 const clubData = clubResponse.data || {};
                 setClubData({
+                    id: clubData.id || '',
                     clubName: clubData.nombre || '',
                     description: clubData.descripcion || '',
+                    cvu: clubData.cvu || '',
+                    email: clubData.email || '',
                     numberOfCourts: clubData.numeroDeCanchas || 0,
                     canchas: clubData.canchas || []
                 });
@@ -42,25 +47,42 @@ function OwnerPage() {
                 setLoading(false);
             }
         };
-
+    
         fetchClubData();
     }, [id, navigate]);
 
     const handleUpdateClub = async (e) => {
         e.preventDefault();
+        console.log('Datos del club antes de actualizar:', clubData);
+    
+        if (!clubData.id) {
+            alert("El ID del club es requerido.");
+            return;
+        }
+        
+        const updatedCanchas = clubData.canchas.map(canchas => ({
+            ...canchas,
+            Club: { Id: clubData.id }
+        }));
+    
+        const clubInfo = {
+            id: clubData.id,
+            nombre: clubData.clubName,
+            descripcion: clubData.description,
+            cvu: clubData.cvu,
+            email: clubData.email,
+            numeroDeCanchas: clubData.numberOfCourts,
+            canchas: updatedCanchas
+        };
+    
+        console.log('Datos que se enviarán a la API:', clubInfo);
+    
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-
-            await axios.put(`https://localhost:7019/api/Club/${id}`, {
-                nombre: clubData.clubName,
-                descripcion: clubData.description,
-                numeroDeCanchas: clubData.numberOfCourts
-            }, config);
+            await axios.put(`https://localhost:7019/api/Club/${clubData.id}`, clubInfo);
             alert('Datos del club actualizados exitosamente');
         } catch (error) {
-            console.error('Error al actualizar los datos del club:', error);
-            alert('Error al actualizar los datos del club');
+            console.error('Error al actualizar los datos del club:', error.response.data);
+            alert('Error al actualizar los datos del club: ' + error.response.data.title);
         }
     };
 
@@ -107,32 +129,52 @@ function OwnerPage() {
                         <Form onSubmit={handleUpdateClub}>
                             <Form.Group className="mb-3" controlId="formClubName">
                                 <Form.Label>Nombre del Club</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    placeholder="Ingrese el nombre del club" 
-                                    value={clubData.clubName} 
-                                    onChange={(e) => setClubData({ ...clubData, clubName: e.target.value })} 
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Ingrese el nombre del club"
+                                    value={clubData.clubName}
+                                    onChange={(e) => setClubData({ ...clubData, clubName: e.target.value })}
                                 />
                             </Form.Group>
 
-                            <Form.Group className="mb- 3" controlId="formDescription">
+                            <Form.Group className="mb-3" controlId="formDescription">
                                 <Form.Label>Descripción</Form.Label>
-                                <Form.Control 
-                                    as="textarea" 
-                                    rows={3} 
-                                    placeholder="Ingrese una descripción del club" 
-                                    value={clubData.description} 
-                                    onChange={(e) => setClubData({ ...clubData, description: e.target.value })} 
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Ingrese una descripción del club"
+                                    value={clubData.description}
+                                    onChange={(e) => setClubData({ ...clubData, description: e.target.value })}
                                 />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formNumberOfCourts">
                                 <Form.Label>Número de Canchas</Form.Label>
-                                <Form.Control 
-                                    type="number" 
-                                    placeholder="Ingrese el número de canchas" 
-                                    value={clubData.numberOfCourts} 
-                                    onChange={(e) => setClubData({ ...clubData, numberOfCourts: e.target.value })} 
+                                <Form.Control
+                                    type="number"
+                                    placeholder="Ingrese el número de canchas"
+                                    value={clubData.numberOfCourts}
+                                    onChange={(e) => setClubData({ ...clubData, numberOfCourts: e.target.value })}
+                                />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formCVU">
+                                <Form.Label>CVU</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Ingrese el CVU del club"
+                                    value={clubData.cvu}
+                                    onChange={(e) => setClubData({ ...clubData, cvu: e.target.value })}
+                                />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formEmail">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Ingrese el email del club"
+                                    value={clubData.email}
+                                    onChange={(e) => setClubData({ ...clubData, email: e.target.value })}
                                 />
                             </Form.Group>
 
