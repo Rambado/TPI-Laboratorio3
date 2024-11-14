@@ -3,7 +3,6 @@ import { Navbar, Nav, Container } from 'react-bootstrap';
 
 const HomePage = () => {
 
-
     return (
         <>
             <Navbar bg="light" data-bs-theme="light">

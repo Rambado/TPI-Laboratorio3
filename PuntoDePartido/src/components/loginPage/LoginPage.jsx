@@ -10,22 +10,30 @@ function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const response = await axios.post('https://localhost:7019/api/Auth/login', {
                 dni: dni,
                 contrasena: contrasena,
             });
-
+    
             const { token, rol, usuarioId, nombre, expiration } = response.data;
-
+    
             localStorage.setItem('token', token);
             localStorage.setItem('userId', usuarioId);
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('rol', rol);
             localStorage.setItem('tokenExpiration', expiration);
-
-            navigate(rol === 'Jugador' ? '/reserva' : '/owner');
+    
+            if (rol === 'Jugador') {
+                navigate('/reserva');
+            } else if (rol === 'Owner') {
+                navigate('/owner');
+            } else if (rol === 'Administrador') {
+                navigate('/sysAdmin');
+            } else {
+                alert('Rol no reconocido');
+            }
         } catch (error) {
             if (error.response) {
                 console.error("Error en la respuesta:", error.response.data);
