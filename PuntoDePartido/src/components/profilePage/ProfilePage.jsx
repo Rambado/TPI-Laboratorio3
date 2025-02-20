@@ -10,9 +10,7 @@ function ProfilePage() {
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
     const [posicion, setPosicion] = useState('');
-    //const [newPassword, setNewPassword] = useState('');
-    //const [confirmPassword, setConfirmPassword] = useState('');
-    // const [reservasAnteriores, setReservasAnteriores] = useState([]);
+    // Si en el API la posición es numérica (1, 2, 3) usaremos esos valores
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,6 +24,7 @@ function ProfilePage() {
 
                 const config = { headers: { Authorization: `Bearer ${token}` } };
 
+                // Unificamos el endpoint para GET y PUT (suponiendo que es el mismo)
                 const profileResponse = await axios.get(`https://localhost:7019/api/usuario/${userId}`, config);
                 console.log('Respuesta de la API:', profileResponse.data);
 
@@ -35,12 +34,6 @@ function ProfilePage() {
                 setEmail(profileData.email || '');
                 setTelefono(profileData.tel || '');
                 setPosicion(profileData.posicionEnCancha || '');
-
-                console.log('Respuesta de la API:', profileResponse.data);
-
-
-                // const reservasResponse = await axios.get('https://localhost:7020/api/user/reservas', config);
-                // setReservasAnteriores(reservasResponse.data || []);
             } catch (error) {
                 console.error('Error al cargar datos:', error);
                 alert('Error al cargar datos');
@@ -56,7 +49,7 @@ function ProfilePage() {
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`http://localhost:7020/api/user/${userId}`, { nombre, email, telefono, posicion }, config);
+            await axios.put(`https://localhost:7019/api/usuario/${userId}`, { nombre, email, telefono, posicion }, config);
             alert('Perfil actualizado exitosamente');
         } catch (error) {
             console.error('Error al actualizar perfil:', error);
@@ -64,8 +57,8 @@ function ProfilePage() {
         }
     };
 
-    const obtenerPosicionJuego = (posicion) => {
-        switch (posicion) {
+    const obtenerPosicionJuego = (pos) => {
+        switch (parseInt(pos)) {
             case 1:
                 return 'Drive';
             case 2:
@@ -77,26 +70,9 @@ function ProfilePage() {
         }
     };
 
-    // const handlePasswordChange = async (e) => {
-    //     e.preventDefault();
-    //     if (newPassword !== confirmPassword) {
-    //         alert('Las contraseñas no coinciden');
-    //         return;
-    //     }
-    //     try {
-    //         const token = localStorage.getItem('token');
-    //         const config = { headers: { Authorization: `Bearer ${token}` } };
-    //         await axios.post('http://localhost:7020/api/user/change-password', { newPassword }, config);
-    //         alert('Contraseña cambiada exitosamente');
-    //     } catch (error) {
-    //         console.error('Error al cambiar contraseña:', error);
-    //         alert('Error al cambiar contraseña');
-    //     }
-    // };
-
     return (
         <>
-            <Navbar bg="light">
+            <Navbar bg="dark" variant="dark" expand="lg">
                 <Container>
                     <Navbar.Brand as={Link} to='/'>
                         <img
@@ -104,11 +80,11 @@ function ProfilePage() {
                             src="../../../img/PdP.png"
                             width="40"
                             height="40"
-                            className="d-inline-block align-center"
+                            className="d-inline-block align-center me-2"
                         />
                         Punto de Partido
                     </Navbar.Brand>
-                    <Nav>
+                    <Nav className="ms-auto">
                         <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
                         <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
                         <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
@@ -116,10 +92,10 @@ function ProfilePage() {
                 </Container>
             </Navbar>
 
-            <Container className="mt-5">
+            <Container className="mt-5" style={{ minHeight: '80vh' }}>
                 <Row>
                     <Col md={4}>
-                        <Card>
+                        <Card bg="dark" text="white" className="mb-4">
                             <Card.Header as="h5">Perfil del Jugador</Card.Header>
                             <Card.Body>
                                 {userData ? (
@@ -136,25 +112,10 @@ function ProfilePage() {
                                 )}
                             </Card.Body>
                         </Card>
-                        {/* <Card className="mt-4">
-                            <Card.Header as="h5">Reservas Anteriores</Card.Header>
-                            <Card.Body>
-                                <ListGroup variant="flush">
-                                    {reservasAnteriores.map((reserva) => (
-                                        <ListGroup.Item key={reserva.id}>
-                                            <strong>Fecha:</strong> {reserva.fecha} <br />
-                                            <strong>Club:</strong> {reserva.club} <br />
-                                            <strong>Turno:</strong> {reserva.turno} <br />
-                                            <strong>Cancha:</strong> {reserva.cancha}
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </Card.Body>
-                        </Card> */}
                     </Col>
 
                     <Col md={8}>
-                        <Card className="mb-4">
+                        <Card bg="dark" text="white" className="mb-4">
                             <Card.Header as="h5">Editar Información del Perfil</Card.Header>
                             <Card.Body>
                                 <Form onSubmit={handleUpdateProfile}>
@@ -190,10 +151,15 @@ function ProfilePage() {
 
                                     <Form.Group className="mb-3" controlId="formPosicion">
                                         <Form.Label>Posición en Cancha</Form.Label>
-                                        <Form.Select value={posicion} onChange={(e) => setPosicion(e.target.value)}>
-                                            <option value="Drive">Drive</option>
-                                            <option value="Revés">Revés</option>
-                                            <option value="Ambas">Ambas</option>
+                                        <Form.Select
+                                            value={posicion}
+                                            onChange={(e) => setPosicion(parseInt(e.target.value))}
+                                            required
+                                        >
+                                            <option value="">Selecciona una posición</option>
+                                            <option value={1}>Drive</option>
+                                            <option value={2}>Revés</option>
+                                            <option value={3}>Ambos lados</option>
                                         </Form.Select>
                                     </Form.Group>
 
@@ -204,38 +170,6 @@ function ProfilePage() {
                             </Card.Body>
                         </Card>
 
-                        {/* <Card>
-                            <Card.Header as="h5">Cambiar Contraseña</Card.Header>
-                            <Card.Body>
-                                <Form onSubmit={handlePasswordChange}>
-                                    <Form.Group className="mb-3" controlId="formPasswordNueva">
-                                        <Form.Label>Nueva Contraseña</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            placeholder="Ingrese nueva contraseña"
-                                            required
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3" controlId="formPasswordConfirmar">
-                                        <Form.Label>Confirmar Nueva Contraseña</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="Confirme nueva contraseña"
-                                            required
-                                        />
-                                    </Form.Group>
-
-                                    <Button variant="primary" type="submit">
-                                        Cambiar Contraseña
-                                    </Button>
-                                </Form>
-                            </Card.Body>
-                        </Card> */}
                     </Col>
                 </Row>
             </Container>

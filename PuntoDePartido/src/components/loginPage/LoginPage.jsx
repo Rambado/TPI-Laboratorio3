@@ -11,7 +11,7 @@ function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://localhost:7019/api/Auth/login', {
+            const response = await axios.post('https://localhost:7020/api/Auth/login', {
                 dni,
                 contrasena
             });
