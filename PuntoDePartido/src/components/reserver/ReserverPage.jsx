@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Button, ListGroup, Container, Navbar, Nav  } from 'react-bootstrap';
+import { Form,Button,ListGroup,Container,Navbar,Nav,Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 function ReserverPage() {
@@ -9,7 +9,6 @@ function ReserverPage() {
   const [selectedTurnos, setSelectedTurnos] = useState([]);
 
   const clubes = ['Utopia', 'Rosario Padel'];
-
 
   const turnosPorHora = {
     Mañana: ['08:00 - 09:30', '09:30 - 11:00', '11:00 - 12:30'],
@@ -40,103 +39,114 @@ function ReserverPage() {
     const turnos = turnosPorHora[selectedTimeSlot] || [];
     const ocupados = cuposOcupados[selectedClub]?.[selectedDay]?.[selectedTimeSlot] || [];
 
-    setSelectedTurnos(turnos.map((turno, index) => ({
-      turno,
-      ocupado: ocupados[index]
-    })));
+    setSelectedTurnos(
+      turnos.map((turno, index) => ({
+        turno,
+        ocupado: ocupados[index] || false
+      }))
+    );
   };
-
 
   return (
     <>
-      <Navbar bg="light" data-bs-theme="light">
-                <Container>
-                    <Navbar.Brand as={Link} to='/'>
-                        <img
-                            alt=""
-                            src="../../../img/PdP.png"
-                            width="40"
-                            height="40"
-                            className="d-inline-block align-center" />Punto de Partido</Navbar.Brand>
-                    <Nav>
-                        <Nav.Link as={Link} to='/'>Inicio</Nav.Link>
-                        <Nav.Link as={Link} to='/reserva'>Reservas</Nav.Link>
-                        <Nav.Link as={Link} to='/perfil'>Perfil</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar>
+      <Navbar bg="dark" variant="dark" expand="lg">
+        <Container>
+          <Navbar.Brand as={Link} to="/">
+            <img
+              alt=""
+              src="/img/PdP.png"
+              width="40"
+              height="40"
+              className="d-inline-block align-center me-2"
+            />
+            Punto de Partido
+          </Navbar.Brand>
+          <Nav className="ms-auto">
+            <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+            <Nav.Link as={Link} to="/reserva">Reservas</Nav.Link>
+            <Nav.Link as={Link} to="/perfil">Perfil</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
 
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <Form onSubmit={handleSubmit} style={{ width: '500px' }}>
-          <h2 className="text-center mb-4">Reservar una Cancha</h2>
+      <div className="py-5" style={{ backgroundColor: '#000', minHeight: '100vh' }}>
+        <Container className="d-flex justify-content-center align-items-center">
+          {/* Card que envuelve el formulario */}
+          <Card className="p-4 shadow" style={{ backgroundColor: '#1a1a1a', width: '500px' }}>
+            <Card.Title as="h2" className="text-center text-white mb-4">
+              Reservar una Cancha
+            </Card.Title>
+            
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label className="text-white">Selecciona el club</Form.Label>
+                <Form.Select
+                  value={selectedClub}
+                  onChange={(e) => setSelectedClub(e.target.value)}
+                  required
+                >
+                  <option value="">Elige un club</option>
+                  {clubes.map((club) => (
+                    <option key={club} value={club}>
+                      {club}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Selecciona el club</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedClub}
-              onChange={(e) => setSelectedClub(e.target.value)}
-              required
-            >
-              <option value="">Elige un club</option>
-              {clubes.map((club) => (
-                <option key={club} value={club}>
-                  {club}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="text-white">Selecciona el día</Form.Label>
+                <Form.Select
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(e.target.value)}
+                  required
+                >
+                  <option value="">Elige un día</option>
+                  <option value="Lunes">Lunes</option>
+                  <option value="Martes">Martes</option>
+                  <option value="Miércoles">Miércoles</option>
+                  <option value="Jueves">Jueves</option>
+                  <option value="Viernes">Viernes</option>
+                  <option value="Sábado">Sábado</option>
+                </Form.Select>
+              </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Selecciona el día</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              required
-            >
-              <option value="">Elige un día</option>
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miércoles">Miércoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sábado">Sábado</option>
-            </Form.Control>
-          </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="text-white">Selecciona el turno</Form.Label>
+                <Form.Select
+                  value={selectedTimeSlot}
+                  onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                  required
+                >
+                  <option value="">Elige un turno</option>
+                  <option value="Mañana">Mañana</option>
+                  <option value="Tarde">Tarde</option>
+                  <option value="Noche">Noche</option>
+                </Form.Select>
+              </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Selecciona el turno</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedTimeSlot}
-              onChange={(e) => setSelectedTimeSlot(e.target.value)}
-              required
-            >
-              <option value="">Elige un turno</option>
-              <option value="Mañana">Mañana</option>
-              <option value="Tarde">Tarde</option>
-              <option value="Noche">Noche</option>
-            </Form.Control>
-          </Form.Group>
+              <Button variant="success" type="submit" className="w-100 mb-3">
+                Ver cupos disponibles
+              </Button>
+            </Form>
 
-          <Button variant="primary" type="submit" className="w-100 mb-3">
-            Ver cupos disponibles
-          </Button>
-
-          {selectedTurnos.length > 0 && (
-            <ListGroup>
-              {selectedTurnos.map(({ turno, ocupado }, index) => (
-                <ListGroup.Item
-                  key={index}
-                  action
-                  variant={ocupado ? 'danger' : 'success'}>
-                  {turno} - {ocupado ? 'Ocupado' : 'Disponible'}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          )}
-        </Form>
+            {selectedTurnos.length > 0 && (
+              <ListGroup>
+                {selectedTurnos.map(({ turno, ocupado }, index) => (
+                  <ListGroup.Item
+                    key={index}
+                    action
+                    variant={ocupado ? 'danger' : 'success'}
+                    className="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{turno}</span>
+                    <span>{ocupado ? 'Ocupado' : 'Disponible'}</span>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            )}
+          </Card>
+        </Container>
       </div>
     </>
   );
